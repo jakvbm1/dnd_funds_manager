@@ -1,3 +1,4 @@
+import 'package:dnd_funds_manager/pages/character_select.dart';
 import 'package:flutter/material.dart';
 import 'package:dnd_funds_manager/pages/home.dart';
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'dnd funds manager',
 
-      home: HomePage(),
+      home: CharacterPage(),
       debugShowCheckedModeBanner: false,
     );
   }
