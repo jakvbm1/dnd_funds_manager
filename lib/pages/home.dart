@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:dnd_funds_manager/materials/currency.dart';
@@ -24,7 +23,6 @@ class _HomePageState extends State<HomePage>
   {
     final Directory directory = await getApplicationDocumentsDirectory();
     final File file = File('${directory.path}/cash.txt');
-    StringBuffer to_save = StringBuffer();
     await file.writeAsString(funds.toString());
   }
 
