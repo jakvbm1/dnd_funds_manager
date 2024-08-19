@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dnd_funds_manager/materials/character.dart';
 import 'package:dnd_funds_manager/pages/home.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
@@ -67,7 +68,7 @@ class _CharacterPageState extends State<CharacterPage> {
     itemBuilder: (context, index) 
     {
       return GestureDetector(
-        onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage())),
+        onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(selected_char: characters[index],))),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container
@@ -76,7 +77,7 @@ class _CharacterPageState extends State<CharacterPage> {
             child: Text(characters[index].name, textAlign: TextAlign.center,),
             decoration: BoxDecoration
             (
-              border: Border.all(color: const Color.fromARGB(255, 68, 68, 68), width: 1),
+              border: Border.all(color: const Color.fromARGB(255, 129, 129, 129).withOpacity(0.4), width: 2),
               borderRadius: BorderRadius.circular(16)
             ),
           ),
@@ -90,7 +91,15 @@ class _CharacterPageState extends State<CharacterPage> {
   Widget build(BuildContext context) {
     return Scaffold
     (
-      body: character_selection(context)
+      appBar: bar(),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          
+          Expanded(child: character_selection(context)),
+          character_adding()
+        ],
+      )
     );
   }
 
@@ -107,8 +116,51 @@ class _CharacterPageState extends State<CharacterPage> {
          {
           characters.add(Character(name: 'Ila'));
           write_chars();
-          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+          //Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
       },),
+    );
+  }
+
+  GestureDetector character_adding()
+  {
+    return GestureDetector
+    (
+      onTap: () 
+      {
+        
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container
+        (
+          height: 100,
+          decoration: BoxDecoration
+          (
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(width: 2, color: const Color.fromARGB(255, 129, 129, 129).withOpacity(0.4)
+          ),
+        ),
+        child: Text('Dodaj postać', textAlign: TextAlign.center,),
+      ),
+    )
+    );
+  }
+
+  AppBar bar()
+  {
+    return AppBar
+    (
+      title: Text('DND funds manager',
+      style: TextStyle
+      (
+      fontSize: 36,
+      fontWeight: FontWeight.w700,
+      color: Colors.white
+      ),
+      ),
+      centerTitle: true,
+      backgroundColor: const Color.fromARGB(255, 129, 129, 129).withOpacity(0.4),
+      
     );
   }
 }
