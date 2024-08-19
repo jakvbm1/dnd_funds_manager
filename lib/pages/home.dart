@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dnd_funds_manager/materials/character.dart';
 import 'package:flutter/material.dart';
 import 'package:dnd_funds_manager/materials/currency.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:path_provider/path_provider.dart';
 
 class HomePage extends StatefulWidget
@@ -9,7 +10,7 @@ class HomePage extends StatefulWidget
   HomePage({super.key, required this.selected_char});
   final Character selected_char;
   @override
-  _HomePageState createState() => _HomePageState(selected_char: selected_char);
+  _HomePageState createState() => _HomePageState(selectedChar: selected_char);
   
   
 }
@@ -18,14 +19,14 @@ class _HomePageState extends State<HomePage>
 {
   double funds = 0.0;
   List<Currency> currencies = [];
-  Character selected_char;
+  Character selectedChar;
 
-  _HomePageState({required this.selected_char});
+  _HomePageState({required this.selectedChar});
 
   _write() async
   {
     final Directory directory = await getApplicationDocumentsDirectory();
-    final File file = File('${directory.path}/cash.txt');
+    final File file = File('${directory.path}/${selectedChar.name}_cash.txt');
     await file.writeAsString(funds.toString());
   }
 
@@ -34,7 +35,7 @@ class _HomePageState extends State<HomePage>
     try
     {
       final Directory directory = await getApplicationDocumentsDirectory();
-      final File file = File('${directory.path}/cash.txt');
+      final File file = File('${directory.path}/${selectedChar.name}_cash.txt');
       if(await file.exists())
       {
         setState(() {
@@ -82,7 +83,7 @@ class _HomePageState extends State<HomePage>
     AppBar appbar() {
     return AppBar
     (
-      title: Text(selected_char.name+'\'s funds',
+      title: Text(selectedChar.name+'\'s funds',
       style: TextStyle
       (
       fontSize: 36,
@@ -145,31 +146,37 @@ class _HomePageState extends State<HomePage>
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: 
             [
-              Container(child: TextButton(onPressed: (){sub_money(currencies[index].base_multiplier, myController.text);}, child: Text('Odejmij')),
-               //color: Colors.transparent,
-               height: 40,
-               width: 80,
-               decoration: BoxDecoration
-               (
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: const Color.fromARGB(255, 129, 129, 129), width: 3.0)
-               ),
-               ),
+              GestureDetector(
+                onTap: (){sub_money(currencies[index].base_multiplier, myController.text);},
+                child: Container(child: SvgPicture.asset('media/minus.svg'),               
+                 //color: Colors.transparent,
+                 height: 40,
+                 width: 80,
+                 decoration: BoxDecoration
+                 (
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color.fromARGB(255, 129, 129, 129), width: 3.0)
+                 ),
+                 ),
+              ),
               Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, crossAxisAlignment: CrossAxisAlignment.center, children:
                [
                 Text(currencies[index].name, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w400),),
                 Container(child: TextField(controller: myController), width: 80, height: 40)
                 ],),
-              Container(child: TextButton(onPressed: (){add_money(currencies[index].base_multiplier, myController.text);}, child: Text('Dodaj')),
-               //color: Colors.transparent,
-               height: 40,
-               width: 80,
-               decoration: BoxDecoration
-               (
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: const Color.fromARGB(255, 129, 129, 129), width: 3.0)
-               ),
+              GestureDetector(
+                onTap: (){add_money(currencies[index].base_multiplier, myController.text);},
+                child: Container(child: SvgPicture.asset('media/plus.svg'),
+                 //color: Colors.transparent,
+                 height: 40,
+                 width: 80,
+                 decoration: BoxDecoration
+                 (
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color.fromARGB(255, 129, 129, 129), width: 3.0)
                  ),
+                   ),
+              ),
             ],
           ),
         ),        
@@ -180,15 +187,21 @@ class _HomePageState extends State<HomePage>
 
   void add_money(double multiplier, String value)
   {
+    try
+    {
     double amount = double.parse(value);
     setState(() {
       funds += multiplier * amount;
     });
     _write();
+    }
+    catch(e) {print(e.toString());}
   }
 
   void sub_money(double multiplier, String value)
   {
+    try
+    {
     double amount = double.parse(value);
     if(funds >= amount*multiplier)
     {
@@ -199,5 +212,7 @@ class _HomePageState extends State<HomePage>
       });
       _write();
     }
+    }
+    catch(e) {print(e.toString());}
   }
 }
