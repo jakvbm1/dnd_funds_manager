@@ -1,6 +1,5 @@
 import 'package:dnd_funds_manager/pages/character_select.dart';
 import 'package:flutter/material.dart';
-import 'package:dnd_funds_manager/pages/home.dart';
 
 
 void main() {

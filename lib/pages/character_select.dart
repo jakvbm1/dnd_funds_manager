@@ -103,31 +103,13 @@ class _CharacterPageState extends State<CharacterPage> {
     );
   }
 
-  Container test_button(BuildContext context) {
-    return Container
-    (
-      alignment: Alignment.center,
-      height: 200,
-      width: 200,
-      decoration: BoxDecoration(color: const Color.fromARGB(255, 224, 202, 135)),
-      child: TextButton(
-        child: Text("przejdź dalej"),
-         onPressed: () 
-         {
-          characters.add(Character(name: 'Ila'));
-          write_chars();
-          //Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
-      },),
-    );
-  }
-
   GestureDetector character_adding()
   {
     return GestureDetector
     (
       onTap: () 
       {
-        
+        _displayInputDialog(context);
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -162,5 +144,43 @@ class _CharacterPageState extends State<CharacterPage> {
       backgroundColor: const Color.fromARGB(255, 129, 129, 129).withOpacity(0.4),
       
     );
+  }
+
+  Future<void> _displayInputDialog(BuildContext context) async
+  {
+    TextEditingController _textFieldControler = TextEditingController();
+
+    return showDialog(
+      context: context,
+       builder: (context) 
+       {
+        return AlertDialog(
+          title: Text('Podaj imię postaci'),
+          content: TextField
+          (
+            controller: _textFieldControler,
+            decoration: InputDecoration(hintText: "imię"),
+          ),
+          actions: <Widget> [
+            TextButton(
+              onPressed: (){Navigator.pop(context);},
+             child: Text('ANULUJ')),
+
+             TextButton(
+              onPressed:() {
+                setState(() {
+                 characters.add(Character(name: _textFieldControler.text));
+                 write_chars();
+                });
+                Navigator.pop(context);
+                 
+              },
+              child: Text('DODAJ')
+              )
+          ]
+        );
+       }
+    );
+    
   }
 }
