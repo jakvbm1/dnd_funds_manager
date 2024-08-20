@@ -74,7 +74,12 @@ class _CharacterPageState extends State<CharacterPage> {
           child: Container
           (
             height: 100,
-            child: Text(characters[index].name, textAlign: TextAlign.center,),
+            alignment: Alignment.center,
+            child: Text
+            (
+            characters[index].name,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w400)),
             decoration: BoxDecoration
             (
               border: Border.all(color: const Color.fromARGB(255, 129, 129, 129).withOpacity(0.4), width: 2),
@@ -91,17 +96,34 @@ class _CharacterPageState extends State<CharacterPage> {
   Widget build(BuildContext context) {
     return Scaffold
     (
+      backgroundColor: const Color.fromARGB(255, 54, 54, 54),
       appBar: bar(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          
+          characterSelectionText(),
           Expanded(child: character_selection(context)),
           character_adding()
         ],
       )
     );
   }
+
+  Container characterSelectionText() => 
+  Container
+  (height: 40,
+  alignment: Alignment.center,
+   child: Text
+   ("Character selection",
+  textAlign: TextAlign.center,
+  style: TextStyle
+  (
+    fontWeight: FontWeight.w500,
+    fontSize: 18,
+    color: Colors.white
+  ),
+  ),
+   );
 
   GestureDetector character_adding()
   {
@@ -116,13 +138,14 @@ class _CharacterPageState extends State<CharacterPage> {
         child: Container
         (
           height: 100,
+          alignment: Alignment.center,
           decoration: BoxDecoration
           (
             borderRadius: BorderRadius.circular(16),
             border: Border.all(width: 2, color: const Color.fromARGB(255, 129, 129, 129).withOpacity(0.4)
           ),
         ),
-        child: Text('Dodaj postać', textAlign: TextAlign.center,),
+        child: Text('Add character', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w400),),
       ),
     )
     );
@@ -155,16 +178,16 @@ class _CharacterPageState extends State<CharacterPage> {
        builder: (context) 
        {
         return AlertDialog(
-          title: Text('Podaj imię postaci'),
+          title: Text('Input character\'s name'),
           content: TextField
           (
             controller: _textFieldControler,
-            decoration: InputDecoration(hintText: "imię"),
+            decoration: InputDecoration(hintText: "name"),
           ),
           actions: <Widget> [
             TextButton(
               onPressed: (){Navigator.pop(context);},
-             child: Text('ANULUJ')),
+             child: Text('CANCEL')),
 
              TextButton(
               onPressed:() {
@@ -175,7 +198,7 @@ class _CharacterPageState extends State<CharacterPage> {
                 Navigator.pop(context);
                  
               },
-              child: Text('DODAJ')
+              child: Text('PROCEED')
               )
           ]
         );

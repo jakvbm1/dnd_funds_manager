@@ -162,7 +162,7 @@ class _HomePageState extends State<HomePage>
               Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, crossAxisAlignment: CrossAxisAlignment.center, children:
                [
                 Text(currencies[index].name, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w400),),
-                Container(child: TextField(controller: myController), width: 80, height: 40)
+                Container(child: TextField(controller: myController, style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400),), width: 80, height: 40)
                 ],),
               GestureDetector(
                 onTap: (){add_money(currencies[index].base_multiplier, myController.text);},
