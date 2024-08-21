@@ -67,7 +67,8 @@ class _CharacterPageState extends State<CharacterPage> {
     scrollDirection: Axis.vertical,
     itemBuilder: (context, index) 
     {
-      return GestureDetector(
+      return InkWell(
+        highlightColor: Colors.blue,
         onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(selected_char: characters[index],))),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -125,10 +126,11 @@ class _CharacterPageState extends State<CharacterPage> {
   ),
    );
 
-  GestureDetector character_adding()
+  InkWell character_adding()
   {
-    return GestureDetector
+    return InkWell
     (
+      highlightColor: Colors.blue,
       onTap: () 
       {
         _displayInputDialog(context);

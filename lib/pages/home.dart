@@ -146,8 +146,9 @@ class _HomePageState extends State<HomePage>
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: 
             [
-              GestureDetector(
+              InkWell(
                 onTap: (){sub_money(currencies[index].base_multiplier, myController.text);},
+                highlightColor: Colors.blue,
                 child: Container(child: SvgPicture.asset('media/minus.svg'),               
                  //color: Colors.transparent,
                  height: 40,
@@ -164,8 +165,9 @@ class _HomePageState extends State<HomePage>
                 Text(currencies[index].name, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w400),),
                 Container(child: TextField(controller: myController, style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400),), width: 80, height: 40)
                 ],),
-              GestureDetector(
+              InkWell(
                 onTap: (){add_money(currencies[index].base_multiplier, myController.text);},
+                highlightColor: Colors.blue,
                 child: Container(child: SvgPicture.asset('media/plus.svg'),
                  //color: Colors.transparent,
                  height: 40,
