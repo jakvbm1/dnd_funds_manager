@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'dnd funds manager',
 
-      home: CharacterPage(),
+      home: SelectCharacterPage(),
       debugShowCheckedModeBanner: false,
     );
   }
