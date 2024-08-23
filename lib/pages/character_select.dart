@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:dnd_funds_manager/materials/character.dart';
+import 'package:dnd_funds_manager/pages/character_navigation.dart';
 import 'package:dnd_funds_manager/pages/character_page.dart';
-import 'package:dnd_funds_manager/pages/home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -70,7 +70,7 @@ class _SelectCharacterPageState extends State<SelectCharacterPage> {
     {
       return InkWell(
         highlightColor: Colors.blue,
-        onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => CharacterPage(character: characters[index]))),
+        onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => CharacterNavigation(char: characters[index]))),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container
