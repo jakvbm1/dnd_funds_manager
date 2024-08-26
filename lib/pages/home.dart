@@ -100,7 +100,7 @@ class _HomePageState extends State<HomePage>
   Container displayCash()
   {
     return Container(
-      height: 200,
+      height: 100,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         color: const Color.fromARGB(255, 129, 129, 129).withOpacity(0.4),

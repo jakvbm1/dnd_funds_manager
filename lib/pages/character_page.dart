@@ -16,67 +16,45 @@ class _Character_pageState extends State<CharacterPage> {
 Character character;
 _Character_pageState({required this.character});
 
-Column selectableOptions()
-{
-  return Column
-  (
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: 
-    [
-      InkWell
-      (
-        onTap: () 
-        {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(selected_char: character,)));
-        },
-        highlightColor: Colors.blue,
-        child: Padding
-        (
-          padding: EdgeInsets.all(8),
-          child: Container
-          (
-            height: 80,
-            decoration: BoxDecoration
-            (
-              border: Border.all(width: 2, color: Colors.black),
-              borderRadius: BorderRadius.circular(12)
-            ),
-            child: Text('Go to funds'),
-          )
-        )
-      ),
 
-      InkWell
-      (
-        onTap: () 
-        {
-          
-        },
-        highlightColor: Colors.blue,
-        child: Padding
-        (
-          padding: EdgeInsets.all(8),
-          child: Container
-          (
-            height: 80,
-            decoration: BoxDecoration
-            (
-              border: Border.all(width: 2, color: Colors.black),
-              borderRadius: BorderRadius.circular(12)
-            ),
-            child: Text('Go to funds'),
-          )
-        )
-      )
-    ],
-  );
-}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold
     (
-      body: selectableOptions()
+      backgroundColor: const Color.fromARGB(255, 54, 54, 54),
+      appBar: AppBar(title: Text(character.name, style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white, fontSize: 36)), centerTitle: true, backgroundColor:Color.fromARGB(255, 129, 129, 129).withOpacity(0.4) ),
+      body: characterInfo()
+    );
+  }
+
+  Column characterInfo()
+  {
+    return Column
+    (
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisAlignment: MainAxisAlignment.start,
+
+      children: 
+      [
+        SizedBox(height: 40),
+        Row
+        (
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: 
+          [
+            Container(height: 80, child: Text
+            ('class: ' + character.charClass.name,
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500, color: Colors.white),
+            ),),
+            Container(height: 80, child: Text
+            (
+              'experience: ' + character.exp.toString(),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500, color: Colors.white),
+            ),)
+          ],
+        )
+      ],
     );
   }
 }
