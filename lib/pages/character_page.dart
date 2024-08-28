@@ -53,7 +53,129 @@ _Character_pageState({required this.character});
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500, color: Colors.white),
             ),)
           ],
+        ),
+        SizedBox(height: 20),
+        InkWell
+        (
+          onTap: (){
+            _displayInfoChanging(context, character);
+          (context, character);},
+          highlightColor: Colors.blue,
+          child: Padding
+          (
+            padding: EdgeInsets.all(8),
+            child: Container
+            (
+              height: 100,
+              decoration: BoxDecoration
+              (
+              border: Border.all(color: const Color.fromARGB(255, 129, 129, 129).withOpacity(0.4), width: 2),
+              borderRadius: BorderRadius.circular(16)
+              ),
+              alignment: Alignment.center,
+              child: Text
+              (
+                'Modify values',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500, color: Colors.white),
+                textAlign: TextAlign.center,
+              ),
+            ),)
+          ,
         )
+      ],
+    );
+  }
+
+Future<void> _displayInfoChanging(BuildContext context, Character character) async {
+  final result = await showDialog<bool>(
+    context: context,
+    builder: (context) {
+      return CharacterInfoDialog(character: character);
+    },
+  );
+
+  if (result == true) {
+    // Update the state of the parent widget if needed
+    setState(() {});
+  }
+}
+}
+
+class CharacterInfoDialog extends StatefulWidget {
+  final Character character;
+
+  CharacterInfoDialog({required this.character});
+
+  @override
+  _CharacterInfoDialogState createState() => _CharacterInfoDialogState();
+}
+
+class _CharacterInfoDialogState extends State<CharacterInfoDialog> {
+  late TextEditingController expController;
+  late CharClass startingClass;
+
+  @override
+  void initState() {
+    super.initState();
+    expController = TextEditingController();
+    startingClass = widget.character.charClass;
+  }
+
+  @override
+  void dispose() {
+    expController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Character\'s info'),
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          TextField(
+            decoration: InputDecoration(hintText: "input your character's exp"),
+            controller: expController,
+          ),
+          DropdownButton<CharClass>(
+            value: startingClass,
+            onChanged: (CharClass? newValue) {
+              setState(() {
+                startingClass = newValue!;
+              });
+            },
+            items: CharClass.values.map((CharClass charClass) {
+              return DropdownMenuItem<CharClass>(
+                value: charClass,
+                child: Text(charClass.cln()),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('CANCEL'),
+        ),
+        TextButton(
+          onPressed: () {
+            setState(() {
+              try {
+                if (expController.text.isNotEmpty) {
+                  widget.character.exp = int.parse(expController.text);
+                }
+                widget.character.charClass = startingClass;
+              } catch (e) {}
+            });
+            Navigator.pop(context, true);
+          },
+          child: Text('PROCEED'),
+        ),
       ],
     );
   }
