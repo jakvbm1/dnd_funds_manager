@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:dnd_funds_manager/materials/character.dart';
 import 'package:dnd_funds_manager/pages/character_navigation.dart';
@@ -36,7 +37,16 @@ class _SelectCharacterPageState extends State<SelectCharacterPage> {
           List<String> names = file.readAsLinesSync();
           for(int i=0; i<names.length; i++)
           {
+            List<String> attributes = names[i].split(', ');
+            if(attributes.length == 1)
+            {
             characters.add(Character(name: names[i]));
+            }
+
+            else
+            {
+              characters.add(Character(name: attributes[0], charClass: CharClass.values.byName(attributes[1]), exp: int.parse(attributes[2])));
+            }
           }
         });        
       }
@@ -54,7 +64,7 @@ class _SelectCharacterPageState extends State<SelectCharacterPage> {
     StringBuffer to_save = StringBuffer();
     for(int i=0; i<characters.length; i++)
     {
-      to_save.writeln(characters[i].name);
+      to_save.writeln(characters[i].name + ', ' + characters[i].charClass.cln() + ', ' + characters[i].exp.toString());
     }
     await file.writeAsString(to_save.toString());
   }
