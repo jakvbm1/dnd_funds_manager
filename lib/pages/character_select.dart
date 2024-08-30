@@ -30,7 +30,26 @@ class _SelectCharacterPageState extends State<SelectCharacterPage> {
         try
     {
       final Directory directory = await getApplicationDocumentsDirectory();
-      final File file = File('${directory.path}/chars.txt');
+      final Directory dir2 = Directory(directory.path + '/characters');
+
+      List<FileSystemEntity> files = await dir2.list().toList();
+      final Iterable<File> fl = files.whereType<File>();
+
+      setState(() {
+  
+
+      for(int i=0; i<files.length; i++)
+      {
+        if (files[i] is File)
+        {
+        String line =  (files[i] as File).readAsStringSync();
+        List<String> attributes = line.split(', ');
+        characters.add(Character(name: attributes[0], charClass: CharClass.values.byName(attributes[1]), exp: int.parse(attributes[2])));
+        }
+      }
+      });
+
+/*       final File file = File('${directory.path}/chars.txt');
       if(await file.exists())
       {
         setState(() {
@@ -49,7 +68,7 @@ class _SelectCharacterPageState extends State<SelectCharacterPage> {
             }
           }
         });        
-      }
+      } */
     }
     catch(e)
     {
@@ -60,13 +79,13 @@ class _SelectCharacterPageState extends State<SelectCharacterPage> {
   write_chars() async
   {
     final Directory directory = await getApplicationDocumentsDirectory();
-    final File file = File('${directory.path}/chars.txt');
-    StringBuffer to_save = StringBuffer();
+    final Directory dir2 = await Directory(directory.path + '/characters').create(recursive: true);
+    List<File> files = [];
     for(int i=0; i<characters.length; i++)
     {
-      to_save.writeln(characters[i].name + ', ' + characters[i].charClass.cln() + ', ' + characters[i].exp.toString());
+      files.add(File('${dir2.path}//${characters[i].name}.txt'));
+      await files[i].writeAsString(characters[i].name + ', ' + characters[i].charClass.cln() + ', ' + characters[i].exp.toString());
     }
-    await file.writeAsString(to_save.toString());
   }
 
   ListView character_selection(BuildContext context)

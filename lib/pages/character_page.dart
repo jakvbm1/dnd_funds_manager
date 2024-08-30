@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:dnd_funds_manager/materials/character.dart';
 import 'package:dnd_funds_manager/pages/home.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 class CharacterPage extends StatefulWidget
 {
@@ -96,10 +99,22 @@ Future<void> _displayInfoChanging(BuildContext context, Character character) asy
 
   if (result == true) {
     // Update the state of the parent widget if needed
+    _updateCharInfo();
     setState(() {});
   }
 }
+
+_updateCharInfo() async
+{
+  final Directory directory = await getApplicationDocumentsDirectory();
+  final Directory dir2 = await Directory(directory.path + '/characters').create(recursive: true);
+
+  File file = File('${dir2.path}/${character.name}.txt');
+  await file.writeAsString(character.name + ', ' + character.charClass.cln() +', ' + character.exp.toString());
 }
+}
+
+
 
 class CharacterInfoDialog extends StatefulWidget {
   final Character character;
