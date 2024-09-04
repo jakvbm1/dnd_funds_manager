@@ -1,6 +1,7 @@
 import 'package:dnd_funds_manager/materials/character.dart';
 import 'package:dnd_funds_manager/pages/character_page.dart';
 import 'package:dnd_funds_manager/pages/home.dart';
+import 'package:dnd_funds_manager/pages/item_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -31,7 +32,7 @@ class _CharacterNavigationState extends State<CharacterNavigation>
   {
     pages.add(CharacterPage(character: char));
     pages.add(HomePage(selected_char: char));
-    pages.add(HomePage(selected_char: char));
+    pages.add(ItemList(character: char));
 
     return Scaffold
     (
