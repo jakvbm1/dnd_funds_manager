@@ -34,7 +34,13 @@ class _ItemListState extends State<ItemList> {
   Widget build(BuildContext context) {
     return Scaffold
     (
-      body: itemList()
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(child: itemList()),
+          addButton()
+        ],
+      )
     );
   }
   
@@ -126,7 +132,32 @@ class _ItemListState extends State<ItemList> {
       
     );
   }
-  
+
+Padding addButton()
+ {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: GestureDetector
+    ( 
+    onTap: ()=>setState(() {
+      _displayAddingItem(context);
+    }),
+
+    child: Container
+    (
+      alignment: Alignment.center,
+      height: 100,
+      child: Text("Add an item to the list", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600), textAlign: TextAlign.center,),
+      decoration: BoxDecoration
+      (
+        border: Border.all(width: 3, color: const Color.fromARGB(255, 129, 129, 129)),
+        borderRadius: BorderRadius.circular(12)
+      ),
+    ),
+    )
+  );
+ }
+
   Future<void> _displaySubtraction(BuildContext context, int index, bool subOrAd) async
   {
     TextEditingController controller = TextEditingController();
@@ -201,5 +232,54 @@ class _ItemListState extends State<ItemList> {
         }
   }
 
+Future<void> _displayAddingItem(BuildContext context) async
+{
+  TextEditingController nameController = TextEditingController();
+  TextEditingController descController = TextEditingController();
 
+  return showDialog
+  (context: context, 
+  builder: (context)
+  {
+    return AlertDialog
+    (
+      title: Text('Item adding'),
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          TextField(
+            decoration: InputDecoration(hintText: "input new item's name"),
+            controller: nameController,
+          ),
+          TextField
+          (
+            decoration: InputDecoration(hintText: 'input item\'s description (optional)'),
+          )
+        ],
+      ),
+      actions: <Widget>
+      [
+        TextButton(
+          onPressed: (){Navigator.pop(context);},
+          child: Text('CANCEL')
+        ),
+
+        TextButton
+        (
+          child: Text('PROCEED'),
+          onPressed: ()
+          {
+            setState(() 
+            {
+              items[Item(name: nameController.text, description:  descController.text)] = 1;
+              Navigator.pop(context);
+            });
+          },
+        )
+      ],
+    );
+  }
+  );
+}
   }
