@@ -1,10 +1,12 @@
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:dnd_funds_manager/materials/character.dart';
 import 'package:dnd_funds_manager/materials/item.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ItemList extends StatefulWidget { 
   Character character;
@@ -20,9 +22,10 @@ class _ItemListState extends State<ItemList> {
     @override
   void initState()
   {
-    items[Item(name: 'miecz', description: 'gęsty')] = 1;
-    items[Item(name: 'łuk', description: 'długi')] = 3;
-    items[Item(name: 'tarcza', description: 'szmato')] = 1;
+    load_items();
+    //items[Item(name: 'miecz', description: 'gęsty')] = 1;
+    //items[Item(name: 'łuk', description: 'długi')] = 3;
+    //items[Item(name: 'tarcza', description: 'szmato')] = 1;
   }
   HashMap<Item, int> items = HashMap();
   //List<Item> items = [];
@@ -167,6 +170,7 @@ Padding addButton()
       setState(() {
       items.update(items.keys.elementAt(index), (value) => 0);
       items.removeWhere((key, value) => value <= 0 );
+      write_items();
       });
     }
 
@@ -211,6 +215,7 @@ Padding addButton()
   
                   items.update(items.keys.elementAt(index), (value) => amt);
                   items.removeWhere((key, value) => value <= 0 );
+                  write_items();
                   }
 
                   catch(e)
@@ -255,6 +260,7 @@ Future<void> _displayAddingItem(BuildContext context) async
           TextField
           (
             decoration: InputDecoration(hintText: 'input item\'s description (optional)'),
+            controller: descController,
           )
         ],
       ),
@@ -272,7 +278,10 @@ Future<void> _displayAddingItem(BuildContext context) async
           {
             setState(() 
             {
+              if(descController.text.isEmpty) {descController.text=' ';}
+
               items[Item(name: nameController.text, description:  descController.text)] = 1;
+              write_items();
               Navigator.pop(context);
             });
           },
@@ -282,4 +291,40 @@ Future<void> _displayAddingItem(BuildContext context) async
   }
   );
 }
+  
+write_items() async
+  {
+    final Directory directory = await getApplicationDocumentsDirectory();
+    File file = File('${directory.path}/${character.name}_items.txt');
+    String itemsStringed = '';
+    for(int i=0; i<items.length; i++)
+    {
+      itemsStringed += (items.keys.elementAt(i).name + ', ' + items.keys.elementAt(i).description + ', ' + items.values.elementAt(i).toString() + '\n');
+    }
+    await file.writeAsString(itemsStringed);
+  }
+
+  load_items() async
+  {
+    final Directory directory = await getApplicationDocumentsDirectory();
+    File file = File('${directory.path}/${character.name}_items.txt');
+    try
+    {
+      List<String> itemsStringed = file.readAsLinesSync();
+      for(int i=0; i<itemsStringed.length; i++)
+      {
+        List<String> loadedItem = itemsStringed[i].split(', ');
+        //print(loadedItem);
+        setState(() 
+        {
+          items[Item(name: loadedItem[0], description: loadedItem[1])] = int.parse(loadedItem[2]);
+        });
+      }
+    }
+    catch(e)
+    {
+      print(e.toString());
+    }
+  }
+  
   }
