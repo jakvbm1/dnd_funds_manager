@@ -37,6 +37,8 @@ class _ItemListState extends State<ItemList> {
   Widget build(BuildContext context) {
     return Scaffold
     (
+      backgroundColor: const Color.fromARGB(255, 54, 54, 54),
+      appBar: AppBar(title: Text('${character.name}\' items', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white, fontSize: 36)), centerTitle: true, backgroundColor:Color.fromARGB(255, 129, 129, 129).withOpacity(0.4) ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -103,8 +105,8 @@ class _ItemListState extends State<ItemList> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: 
                         [
-                          Text(items.keys.elementAt(index).name),
-                          Text("Amount: "+ items.values.elementAt(index).toString())
+                          Text(items.keys.elementAt(index).name, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),),
+                          Text("Amount: "+ items.values.elementAt(index).toString(),style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w400))
                         ],
                       ),
                     ),
@@ -150,7 +152,7 @@ Padding addButton()
     (
       alignment: Alignment.center,
       height: 100,
-      child: Text("Add an item to the list", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600), textAlign: TextAlign.center,),
+      child: Text("Add an item to the list", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white), textAlign: TextAlign.center,),
       decoration: BoxDecoration
       (
         border: Border.all(width: 3, color: const Color.fromARGB(255, 129, 129, 129)),
