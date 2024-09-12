@@ -10,7 +10,7 @@ Character({required this.name, this.exp = 0, this.charClass=CharClass.none});
 
 enum CharClass {none, barbarian, bard, cleric, druid, fighter, monk, paladin, ranger, rogue, sorcerer, warlock, wizard}
 
-extension classname on CharClass
+extension classname on Enum
 {
   String cln()
   {
