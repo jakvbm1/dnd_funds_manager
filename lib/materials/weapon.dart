@@ -1,7 +1,6 @@
 import 'package:dnd_funds_manager/materials/IItem.dart';
 import 'package:dnd_funds_manager/materials/character.dart';
 import 'package:dnd_funds_manager/materials/enums.dart';
-import 'package:dnd_funds_manager/materials/regular_item.dart';
 
 class Weapon extends Item
 {
@@ -11,12 +10,24 @@ String description;
 int nDices = 1;
 int bonus = 0;
 DamageType dmg = DamageType.Slashing;
+List<WeaponType> attributes = [];
 
 Weapon({required this.dice, required this.name, required this.description});
 
   @override
   String showDescription() {
-    String toReturn = description + '\n' + 'Damage type: ' + dmg.toString() + '\n' +'Dices: amount '+nDices.toString()+' type: '+dice.cln();
+
+    String atrString = '';
+    for(int i=0; i<attributes.length; i++)
+    {
+      atrString += attributes[i].cln();
+      if(i != attributes.length-1)
+      {
+        atrString += ', ';
+      }
+    }
+
+    String toReturn = '$description\nDamage type: $dmg\nDices: amount $nDices type: ${dice.cln()} \n$atrString';
     return toReturn;
   }
 

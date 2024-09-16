@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage> {
         color: const Color.fromARGB(255, 129, 129, 129).withOpacity(0.4),
       ),
       child: Text(
-        'Your current funds (in gold): ' '\n' + funds.toString(),
+        'Your current funds (in gold): \n$funds',
         textAlign: TextAlign.center,
         style: const TextStyle(
             fontSize: 24, fontWeight: FontWeight.w500, color: Colors.white),
@@ -152,7 +152,7 @@ class _HomePageState extends State<HomePage> {
                         height: 40,
                         child: TextField(
                           controller: myController,
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: Colors.white, fontWeight: FontWeight.w400),
                         ))
                   ],

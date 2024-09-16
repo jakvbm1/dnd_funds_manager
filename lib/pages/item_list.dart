@@ -1,10 +1,13 @@
 import 'dart:collection';
 import 'dart:io';
 
+import 'package:dnd_funds_manager/materials/IItem.dart';
 import 'package:dnd_funds_manager/materials/character.dart';
+import 'package:dnd_funds_manager/materials/enums.dart';
 import 'package:dnd_funds_manager/materials/regular_item.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -25,7 +28,7 @@ class _ItemListState extends State<ItemList> {
     //items[Item(name: 'tarcza', description: 'szmato')] = 1;
   }
 
-  HashMap<RegularItem, int> items = HashMap();
+  HashMap<Item, int> items = HashMap();
   //List<Item> items = [];
   Character character;
 
@@ -102,8 +105,7 @@ class _ItemListState extends State<ItemList> {
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500),
                             ),
-                            Text(
-                                "Amount: ${items.values.elementAt(index)}",
+                            Text("Amount: ${items.values.elementAt(index)}",
                                 style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
@@ -141,7 +143,8 @@ class _ItemListState extends State<ItemList> {
         padding: const EdgeInsets.all(8.0),
         child: GestureDetector(
           onTap: () => setState(() {
-            _displayAddingItem(context);
+            //_displayAddingItem(context);
+            _ItemTypeSelection(context);
           }),
           child: Container(
             alignment: Alignment.center,
@@ -150,7 +153,7 @@ class _ItemListState extends State<ItemList> {
                 border: Border.all(
                     width: 3, color: const Color.fromARGB(255, 129, 129, 129)),
                 borderRadius: BorderRadius.circular(12)),
-            child: Text(
+            child: const Text(
               "Add an item to the list",
               style: TextStyle(
                   fontSize: 20,
@@ -168,7 +171,7 @@ class _ItemListState extends State<ItemList> {
         builder: (context) {
           return AlertDialog(
             title: Text(items.keys.elementAt(index).showName),
-            content: Text(items.keys.elementAt(index).description),
+            content: Text(items.keys.elementAt(index).showDescription()),
             actions: [
               TextButton(
                   onPressed: () {
@@ -239,6 +242,47 @@ class _ItemListState extends State<ItemList> {
     }
   }
 
+  Future<void> _ItemTypeSelection(BuildContext context) async {
+    String? selectedType;
+
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Select type of Item"),
+            content: DropdownButton<String>(
+              hint: const Text('Select type'),
+              value: selectedType,
+              items: <String>['Regular item', 'Weapon', 'Armor']
+                  .map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (newVal) {
+                setState(() {
+                  selectedType = newVal;
+                });
+              },
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  switch (selectedType) {
+                    case 'Regular item':
+                      _displayAddingItem(context);
+                    case 'Weapon':
+                      _displayAddingWeapon(context, character);
+                  }
+                },
+                child: const Text('PROCEED'),
+              ),
+            ],
+          );
+        });
+  }
+
   Future<void> _displayAddingItem(BuildContext context) async {
     TextEditingController nameController = TextEditingController();
     TextEditingController descController = TextEditingController();
@@ -291,12 +335,32 @@ class _ItemListState extends State<ItemList> {
         });
   }
 
+  Future<void> _displayAddingWeapon(
+      BuildContext context, Character character) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return WeaponAdder(
+          character: character,
+          listOfItems: items,
+        );
+      },
+    );
+
+    if (result == true) {
+      // Update the state of the parent widget if needed
+      //_updateCharInfo();
+      setState(() {});
+    }
+  }
+
   write_items() async {
     final Directory directory = await getApplicationDocumentsDirectory();
     File file = File('${directory.path}/${character.name}_items.txt');
     String itemsStringed = '';
     for (int i = 0; i < items.length; i++) {
-      itemsStringed += ('${items.keys.elementAt(i).showName}, ${items.keys.elementAt(i).description}, ${items.values.elementAt(i)}\n');
+      itemsStringed +=
+          ('${items.keys.elementAt(i).showName}, ${items.keys.elementAt(i).showDescription()}, ${items.values.elementAt(i)}\n');
     }
     await file.writeAsString(itemsStringed);
   }
@@ -317,5 +381,180 @@ class _ItemListState extends State<ItemList> {
     } catch (e) {
       print(e.toString());
     }
+  }
+}
+
+class WeaponAdder extends StatefulWidget {
+  final Character character;
+  final HashMap<Item, int> listOfItems;
+
+  const WeaponAdder(
+      {super.key, required this.character, required this.listOfItems});
+
+  @override
+  _WeaponAdderState createState() => _WeaponAdderState();
+}
+
+class _WeaponAdderState extends State<WeaponAdder> {
+  late TextEditingController nameController;
+  late TextEditingController descController;
+  late DiceType dice = DiceType.d4;
+  late DamageType dmg = DamageType.none;
+  late int ndices = 1;
+  late int bonus = 0;
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController();
+    descController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    descController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+        title: const Text('Weapon adding'),
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              decoration:
+                  const InputDecoration(hintText: "input new weapon's name"),
+              controller: nameController,
+            ),
+            TextField(
+              decoration: const InputDecoration(
+                  hintText: 'input weapon\'s description (optional)'),
+              controller: descController,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text('Number of dices'),
+                 DropdownButton<int>(
+                    value: ndices,
+                    items: <int>[1, 2, 3, 4, 5, 6].map((int selectedValue) {
+                      return DropdownMenuItem(
+                          value: selectedValue,
+                          child: Text(selectedValue.toString()));
+                    }).toList(),
+                    onChanged: (int? newValue) {
+                      setState(() {
+                        ndices = newValue!;
+                      });
+                    }),
+              
+              ],
+            ),           
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                                Text('Type of dices used'),
+                DropdownButton<DiceType>(
+                  value: dice,
+                  onChanged: (DiceType? newValue) {
+                    setState(() {
+                      dice = newValue!;
+                    });
+                  },
+                  items: DiceType.values.map((DiceType charClass) {
+                    return DropdownMenuItem<DiceType>(
+                      value: charClass,
+                      child: Text(charClass.cln()),
+                    );
+                  }).toList(),
+                ),
+               
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text('Weapon\'s bonus'),
+                DropdownButton<int>(
+                    value: bonus,
+                    items: <int>[0, 1, 2, 3, 4, 5].map((int selectedValue) {
+                      return DropdownMenuItem(
+                          value: selectedValue,
+                          child: Text(selectedValue.toString()));
+                    }).toList(),
+                    onChanged: (int? newValue) {
+                      setState(() {
+                        bonus = newValue!;
+                      });
+                    })
+              ],
+            ),
+
+            Row
+            (
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,   
+              children: 
+              [
+                Text('Type of damage'),
+                DropdownButton
+                (
+                  value: dmg,
+                  onChanged: (DamageType? newValue)
+                  {
+                    setState(() {
+                      dmg=newValue!;
+                    });
+                  },
+                  items: DamageType.values.map((DamageType dmgType)
+                  {
+                    return DropdownMenuItem<DamageType>
+                    (
+                      value: dmgType,
+                      child: Text(dmgType.cln())
+                      );
+                  }).toList(),
+                )
+              ],
+            ),
+
+            Container(child: Text("Select weapon's traits"), height: 20,),
+
+              Container(height:90, width: 150, child:ListView.builder
+              (
+                padding: const EdgeInsets.all(8),
+                itemCount: WeaponType.values.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index)
+                {
+                  return Container
+                  (
+                    alignment: Alignment.center,
+                    height: 60,
+                    width: 90,
+                    decoration: BoxDecoration(border: Border.all(width: 2, color: Colors.black), borderRadius: BorderRadius.circular(12)),
+                    child: Column
+                    (
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: 
+                      [
+                        Text(WeaponType.values[index].cln(), textAlign: TextAlign.center,),
+                        Checkbox(value: false, onChanged: (value) {
+                          value = true;
+                        },)
+                      ],
+                    ),
+                  );
+                }
+              ),)
+          ],
+        ));
   }
 }

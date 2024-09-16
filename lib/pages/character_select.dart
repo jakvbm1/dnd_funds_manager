@@ -1,12 +1,8 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:dnd_funds_manager/materials/character.dart';
 import 'package:dnd_funds_manager/pages/character_navigation.dart';
-import 'package:dnd_funds_manager/pages/character_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SelectCharacterPage extends StatefulWidget {
@@ -108,7 +104,7 @@ class _SelectCharacterPageState extends State<SelectCharacterPage> {
                   borderRadius: BorderRadius.circular(16)),
               child: Text(characters[index].name,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.w400)),

@@ -1,7 +1,6 @@
 import 'package:dnd_funds_manager/materials/IItem.dart';
 import 'package:dnd_funds_manager/materials/character.dart';
 import 'package:dnd_funds_manager/materials/enums.dart';
-import 'package:dnd_funds_manager/materials/regular_item.dart';
 
 class Armor extends Item
 {
@@ -17,8 +16,7 @@ Armor({required this.armorClass, required this.description, required this.name})
   @override
   String showDescription() {
     // TODO: implement showDescription
-    String toReturn = description + '\n' + 'Armor Class' + armorClass.toString() + '\n' + 'Bonus stat:' + bonusStat.cln() + '(max: ${maxBonus.toString()})' + '\n' + 
-    'Type: ${armorType.cln()}';
+    String toReturn = '$description\nArmor Class$armorClass\nBonus stat:${bonusStat.cln()}(max: ${maxBonus.toString()})\nType: ${armorType.cln()}';
     return toReturn;
   }
 

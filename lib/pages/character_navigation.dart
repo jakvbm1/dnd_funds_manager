@@ -2,7 +2,6 @@ import 'package:dnd_funds_manager/materials/character.dart';
 import 'package:dnd_funds_manager/pages/character_page.dart';
 import 'package:dnd_funds_manager/pages/home.dart';
 import 'package:dnd_funds_manager/pages/item_list.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CharacterNavigation extends StatefulWidget {
