@@ -12,12 +12,12 @@ int bonus = 0;
 DamageType dmg = DamageType.Slashing;
 List<WeaponType> attributes = [];
 
-Weapon({required this.dice, required this.name, required this.description});
+Weapon({required this.dice, required this.name, required this.description, required this.attributes, this.nDices = 1, this.bonus = 0, this.dmg=DamageType.none });
 
   @override
   String showDescription() {
 
-    String atrString = '';
+    String atrString = 'Traits: ';
     for(int i=0; i<attributes.length; i++)
     {
       atrString += attributes[i].cln();
@@ -27,7 +27,7 @@ Weapon({required this.dice, required this.name, required this.description});
       }
     }
 
-    String toReturn = '$description\nDamage type: $dmg\nDices: amount $nDices type: ${dice.cln()} \n$atrString';
+    String toReturn = '$description\nDamage type: ${dmg.cln()}\nDices: amount $nDices type: ${dice.cln()} \nBonus: +$bonus \n$atrString';
     return toReturn;
   }
 

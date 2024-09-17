@@ -5,6 +5,7 @@ import 'package:dnd_funds_manager/materials/IItem.dart';
 import 'package:dnd_funds_manager/materials/character.dart';
 import 'package:dnd_funds_manager/materials/enums.dart';
 import 'package:dnd_funds_manager/materials/regular_item.dart';
+import 'package:dnd_funds_manager/materials/weapon.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -402,11 +403,16 @@ class _WeaponAdderState extends State<WeaponAdder> {
   late DamageType dmg = DamageType.none;
   late int ndices = 1;
   late int bonus = 0;
+  late List<bool> traits = [];
   @override
   void initState() {
     super.initState();
     nameController = TextEditingController();
     descController = TextEditingController();
+
+    for (int i = 0; i < WeaponType.values.length; i++) {
+      traits.add(false);
+    }
   }
 
   @override
@@ -439,7 +445,7 @@ class _WeaponAdderState extends State<WeaponAdder> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text('Number of dices'),
-                 DropdownButton<int>(
+                DropdownButton<int>(
                     value: ndices,
                     items: <int>[1, 2, 3, 4, 5, 6].map((int selectedValue) {
                       return DropdownMenuItem(
@@ -451,14 +457,13 @@ class _WeaponAdderState extends State<WeaponAdder> {
                         ndices = newValue!;
                       });
                     }),
-              
               ],
-            ),           
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                                Text('Type of dices used'),
+                Text('Type of dices used'),
                 DropdownButton<DiceType>(
                   value: dice,
                   onChanged: (DiceType? newValue) {
@@ -473,7 +478,6 @@ class _WeaponAdderState extends State<WeaponAdder> {
                     );
                   }).toList(),
                 ),
-               
               ],
             ),
             Row(
@@ -495,66 +499,95 @@ class _WeaponAdderState extends State<WeaponAdder> {
                     })
               ],
             ),
-
-            Row
-            (
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,   
-              children: 
-              [
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
                 Text('Type of damage'),
-                DropdownButton
-                (
+                DropdownButton(
                   value: dmg,
-                  onChanged: (DamageType? newValue)
-                  {
+                  onChanged: (DamageType? newValue) {
                     setState(() {
-                      dmg=newValue!;
+                      dmg = newValue!;
                     });
                   },
-                  items: DamageType.values.map((DamageType dmgType)
-                  {
-                    return DropdownMenuItem<DamageType>
-                    (
-                      value: dmgType,
-                      child: Text(dmgType.cln())
-                      );
+                  items: DamageType.values.map((DamageType dmgType) {
+                    return DropdownMenuItem<DamageType>(
+                        value: dmgType, child: Text(dmgType.cln()));
                   }).toList(),
                 )
               ],
             ),
-
-            Container(child: Text("Select weapon's traits"), height: 20,),
-
-              Container(height:90, width: 150, child:ListView.builder
-              (
-                padding: const EdgeInsets.all(8),
-                itemCount: WeaponType.values.length,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index)
-                {
-                  return Container
-                  (
-                    alignment: Alignment.center,
-                    height: 60,
-                    width: 90,
-                    decoration: BoxDecoration(border: Border.all(width: 2, color: Colors.black), borderRadius: BorderRadius.circular(12)),
-                    child: Column
-                    (
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: 
-                      [
-                        Text(WeaponType.values[index].cln(), textAlign: TextAlign.center,),
-                        Checkbox(value: false, onChanged: (value) {
-                          value = true;
-                        },)
-                      ],
-                    ),
-                  );
-                }
-              ),)
+            Container(
+              child: Text("Select weapon's traits"),
+              height: 20,
+            ),
+            Container(
+              height: 90,
+              width: 150,
+              child: ListView.builder(
+                  padding: const EdgeInsets.all(8),
+                  itemCount: WeaponType.values.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      alignment: Alignment.center,
+                      height: 60,
+                      width: 90,
+                      decoration: BoxDecoration(
+                          border: Border.all(width: 2, color: Colors.black),
+                          borderRadius: BorderRadius.circular(12)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            WeaponType.values[index].cln(),
+                            textAlign: TextAlign.center,
+                          ),
+                          Checkbox(
+                            value: traits[index],
+                            onChanged: (value) {
+                              setState(() {
+                                traits[index] = true;
+                              });
+                            },
+                          )
+                        ],
+                      ),
+                    );
+                  }),
+            )
           ],
-        ));
+        ),
+                    actions: <Widget>[
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('CANCEL')),
+              TextButton(
+                child: const Text('PROCEED'),
+                onPressed: () {
+                  setState(() {
+                    if (descController.text.isEmpty) {
+                      descController.text = ' ';
+                    }
+                    List<WeaponType> wt = [];
+                    for(int i=0; i< traits.length; i++)
+                    {
+                      if(traits[i])
+                      {
+                        wt.add(WeaponType.values[i]);
+                      }
+                    } 
+                    widget.listOfItems[Weapon(name: nameController.text, description: descController.text, attributes: wt, dice: dice, bonus: bonus, nDices: ndices, dmg: dmg)] = 1;
+                    Navigator.pop(context, true);
+                  });
+                },
+              )
+            ],
+        );
+
   }
 }
