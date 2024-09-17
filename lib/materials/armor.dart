@@ -11,7 +11,7 @@ ArmorType armorType = ArmorType.None;
 String description;
 String name;
 
-Armor({required this.armorClass, required this.description, required this.name});
+Armor({ required this.description, required this.name, this.maxBonus = 0, this.armorType = ArmorType.None, this.armorClass = 0, this.bonusStat = Stat.none});
 
   @override
   String showDescription() {

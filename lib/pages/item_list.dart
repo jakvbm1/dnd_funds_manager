@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:io';
 
 import 'package:dnd_funds_manager/materials/IItem.dart';
+import 'package:dnd_funds_manager/materials/armor.dart';
 import 'package:dnd_funds_manager/materials/character.dart';
 import 'package:dnd_funds_manager/materials/enums.dart';
 import 'package:dnd_funds_manager/materials/regular_item.dart';
@@ -275,6 +276,8 @@ class _ItemListState extends State<ItemList> {
                       _displayAddingItem(context);
                     case 'Weapon':
                       _displayAddingWeapon(context, character);
+                    case 'Armor':
+                    _displayAddingArmor(context, character);
                   }
                 },
                 child: const Text('PROCEED'),
@@ -354,6 +357,14 @@ class _ItemListState extends State<ItemList> {
       setState(() {});
     }
   }
+
+  Future<void> _displayAddingArmor(BuildContext context, Character character) async {
+    final result = await showDialog<bool>(context: context, builder: (context){return ArmorAdder(character: character, listOfItems: items);});
+    if (result==true){setState(() {
+      
+    });}
+  }
+  
 
   write_items() async {
     final Directory directory = await getApplicationDocumentsDirectory();
@@ -589,5 +600,179 @@ class _WeaponAdderState extends State<WeaponAdder> {
             ],
         );
 
+  }
+}
+
+class ArmorAdder extends StatefulWidget
+{
+  final Character character;
+  final HashMap<Item, int> listOfItems;
+
+  const ArmorAdder(
+      {super.key, required this.character, required this.listOfItems});
+
+  @override
+  _ArmorAdderState createState() => _ArmorAdderState();
+}
+
+class _ArmorAdderState extends State<ArmorAdder>
+{
+  late TextEditingController nameController;
+  late TextEditingController descController;
+  late int maxBonus;
+  late Stat bonusStat;
+  late int armorClass;
+  late ArmorType armorType;
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController();
+    descController = TextEditingController();
+    maxBonus = 0;
+    bonusStat = Stat.none;
+    armorClass = 10;
+    armorType = ArmorType.None;
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    descController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context)
+  {
+    return AlertDialog
+    (
+      title: const Text('Armor adding'),
+      content: Column
+      (
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: 
+        [
+          TextField(
+              decoration:
+                  const InputDecoration(hintText: "input new armor's name"),
+              controller: nameController,
+            ),
+
+            TextField(
+              decoration: const InputDecoration(
+                  hintText: 'input armor\'s description (optional)'),
+              controller: descController,
+            ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text('Armor class'),
+                DropdownButton<int>(
+                    value: armorClass,
+                    items: <int>[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((int selectedValue) {
+                      return DropdownMenuItem(
+                          value: selectedValue,
+                          child: Text(selectedValue.toString()));
+                    }).toList(),
+                    onChanged: (int? newValue) {
+                      setState(() {
+                        armorClass = newValue!;
+                      });
+                    })
+              ],),
+
+              Row
+              (
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: 
+                [
+                  Text("Statistic for bonus"),
+                  DropdownButton<Stat>
+                  (
+                    value: bonusStat,
+                    items: Stat.values.map((Stat selectedStat)
+                    {
+                      return DropdownMenuItem(child: Text(selectedStat.cln()), value: selectedStat);
+                    }).toList(),
+                    onChanged: (Stat? newValue)
+                    {
+                      setState(() {
+                          bonusStat = newValue!;
+                      });
+                    },
+                  )
+                ],
+              ),
+
+              Row
+              (
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text('Max stat bonus'),
+                DropdownButton<int>(
+                    value: maxBonus,
+                    items: <int>[0, 1, 2, 3, 4, 5].map((int selectedValue) {
+                      return DropdownMenuItem(
+                          value: selectedValue,
+                          child: Text(selectedValue.toString()));
+                    }).toList(),
+                    onChanged: (int? newValue) {
+                      setState(() {
+                        maxBonus = newValue!;
+                      });
+                    })
+              ],
+              ),
+
+              Row
+              (
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: 
+                [
+                  Text('Type of armor'),
+                  DropdownButton<ArmorType>
+                  (
+                    value: armorType,
+                    items: ArmorType.values.map((ArmorType selectedType) {
+                      return DropdownMenuItem(value: selectedType, child: Text(selectedType.cln()));
+                    }).toList(),
+                    onChanged: (ArmorType? newValue){
+                      setState(() {
+                        armorType = newValue!;
+                      });
+                    },
+                  )
+                ],
+              )
+        ],     
+      ),
+
+                         actions: <Widget>[
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('CANCEL')),
+              TextButton(
+                child: const Text('PROCEED'),
+                onPressed: () {
+                  setState(() {
+                    if (descController.text.isEmpty) {
+                      descController.text = ' ';
+                    }                     
+                    widget.listOfItems[Armor(name: nameController.text, description: descController.text, maxBonus: maxBonus, armorClass: armorClass, bonusStat: bonusStat, armorType: armorType)] = 1;
+                    Navigator.pop(context, true);
+                    Navigator.pop(context);
+                  });
+                },
+              )
+            ],
+    );
   }
 }
