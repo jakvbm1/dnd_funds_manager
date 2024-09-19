@@ -12,7 +12,6 @@ class RegularItem extends Item {
 
   String name;
 String description;
-double weight = 0;
 
 RegularItem({required this.name, required this.description});
 }

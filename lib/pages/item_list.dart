@@ -594,6 +594,7 @@ class _WeaponAdderState extends State<WeaponAdder> {
                     } 
                     widget.listOfItems[Weapon(name: nameController.text, description: descController.text, attributes: wt, dice: dice, bonus: bonus, nDices: ndices, dmg: dmg)] = 1;
                     Navigator.pop(context, true);
+                    Navigator.pop(context);
                   });
                 },
               )
