@@ -5,6 +5,7 @@ import 'package:dnd_funds_manager/materials/IItem.dart';
 import 'package:dnd_funds_manager/materials/armor.dart';
 import 'package:dnd_funds_manager/materials/character.dart';
 import 'package:dnd_funds_manager/materials/enums.dart';
+import 'package:dnd_funds_manager/materials/item_saver.dart';
 import 'package:dnd_funds_manager/materials/regular_item.dart';
 import 'package:dnd_funds_manager/materials/weapon.dart';
 import 'package:flutter/foundation.dart';
@@ -354,13 +355,16 @@ class _ItemListState extends State<ItemList> {
     if (result == true) {
       // Update the state of the parent widget if needed
       //_updateCharInfo();
+      write_items();
       setState(() {});
     }
   }
 
   Future<void> _displayAddingArmor(BuildContext context, Character character) async {
     final result = await showDialog<bool>(context: context, builder: (context){return ArmorAdder(character: character, listOfItems: items);});
-    if (result==true){setState(() {
+    if (result==true){
+      write_items();
+      setState(() {
       
     });}
   }
@@ -371,10 +375,25 @@ class _ItemListState extends State<ItemList> {
     File file = File('${directory.path}/${character.name}_items.txt');
     String itemsStringed = '';
     for (int i = 0; i < items.length; i++) {
-      itemsStringed +=
-          ('${items.keys.elementAt(i).showName}, ${items.keys.elementAt(i).showDescription()}, ${items.values.elementAt(i)}\n');
+
+        if(items.keys.elementAt(i) is Weapon)
+        {
+          itemsStringed += ItemSaver.weaponString(items.keys.elementAt(i) as Weapon, items.values.elementAt(i)) + '\n';
+        }
+
+        else if(items.keys.elementAt(i) is Armor)
+        {
+         itemsStringed +=  ItemSaver.armorString(items.keys.elementAt(i) as Armor, items.values.elementAt(i))+ '\n';
+        }
+
+        else if(items.keys.elementAt(i) is RegularItem)
+        {
+         itemsStringed +=  ItemSaver.regularItemString(items.keys.elementAt(i) as RegularItem, items.values.elementAt(i))+ '\n';
+        }
     }
     await file.writeAsString(itemsStringed);
+
+
   }
 
   load_items() async {
@@ -383,12 +402,30 @@ class _ItemListState extends State<ItemList> {
     try {
       List<String> itemsStringed = file.readAsLinesSync();
       for (int i = 0; i < itemsStringed.length; i++) {
-        List<String> loadedItem = itemsStringed[i].split(', ');
-        //print(loadedItem);
-        setState(() {
-          items[RegularItem(name: loadedItem[0], description: loadedItem[1])] =
-              int.parse(loadedItem[2]);
-        });
+
+        if(itemsStringed[i].startsWith('w'))
+        {
+          setState(() {
+            var (wpn, amt) = ItemSaver.stringToWeapon(itemsStringed[i]);
+            items[wpn] = amt;
+          });
+        }
+
+        else if(itemsStringed[i].startsWith('a'))
+        {
+          setState(() {
+            var (wpn, amt) = ItemSaver.stringToArmor(itemsStringed[i]);
+            items[wpn] = amt;
+          });
+        }
+
+        else if(itemsStringed[i].startsWith('r'))
+        {
+          setState(() {
+            var (wpn, amt) = ItemSaver.stringToRegularItem(itemsStringed[i]);
+            items[wpn] = amt;
+          });
+        }
       }
     } catch (e) {
       print(e.toString());
